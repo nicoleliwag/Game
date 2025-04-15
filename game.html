@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Disco Beat Revolution</title>
+  <style>
+    /* General layout */
+    body {
+      font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+      color: white;
+    }
+    
+    /* Disco ball animation */
+    .disco-ball {
+      position: fixed;
+      top: -100px;
+      right: -100px;
+      width: 200px;
+      height: 200px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23ffffff"/><rect x="10" y="10" width="10" height="10" fill="%23ff0000"/><rect x="30" y="10" width="10" height="10" fill="%2300ff00"/><rect x="50" y="10" width="10" height="10" fill="%230000ff"/><rect x="70" y="10" width="10" height="10" fill="%23ffff00"/><rect x="10" y="30" width="10" height="10" fill="%23ff00ff"/><rect x="30" y="30" width="10" height="10" fill="%2300ffff"/><rect x="50" y="30" width="10" height="10" fill="%23ff9900"/><rect x="70" y="30" width="10" height="10" fill="%239900ff"/><rect x="10" y="50" width="10" height="10" fill="%2300ff99"/><rect x="30" y="50" width="10" height="10" fill="%23ff0099"/><rect x="50" y="50" width="10" height="10" fill="%2399ff00"/><rect x="70" y="50" width="10" height="10" fill="%230099ff"/><rect x="10" y="70" width="10" height="10" fill="%23ff6600"/><rect x="30" y="70" width="10" height="10" fill="%236600ff"/><rect x="50" y="70" width="10" height="10" fill="%2300ff66"/><rect x="70" y="70" width="10" height="10" fill="%23ff0066"/></svg>');
+      background-size: cover;
+      border-radius: 50%;
+      z-index: -1;
+      animation: spin 10s linear infinite;
+      opacity: 0.1;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Home page & Game page containers */
+    #home-page, #game-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+    #game-page {
+      display: none;
+    }
+    h1 {
+      color: #f8f8f8;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbow 5s linear infinite;
+      background-size: 200% auto;
+    }
+    
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    
+    /* Hamburger menu styling */
+    #menu {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+      z-index: 10;
+      color: white;
+      text-shadow: 0 0 5px rgba(255,255,255,0.5);
+    }
+
+    #menu-content {
+      display: none;
+      position: fixed;
+      right: 20px;
+      top: 60px;
+      background-color: rgba(30, 30, 60, 0.9);
+      border: 1px solid #4d4dff;
+      border-radius: 5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      z-index: 10;
+      backdrop-filter: blur(5px);
+    }
+    .menu-item {
+      padding: 10px 20px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .menu-item:hover {
+      background-color: #4d4dff;
+      color: white;
+      text-shadow: 0 0 5px white;
+    }
+    
+    /* Home page song select styling */
+    #song-select {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #4d4dff;
+      background-color: rgba(30, 30, 60, 0.8);
+      color: white;
+      margin-bottom: 20px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 400px;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 15px;
+    }
+    
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(90deg, #4d4dff, #00ccff);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 18px;
+      margin: 8px;
+      box-shadow: 0 4px 15px rgba(0, 204, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 204, 255, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
+      transform: translateX(-100%);
+      transition: transform 0.3s;
+    }
+    
+    button:hover::after {
+      transform: translateX(100%);
+    }
+    
+    /* Game page – play controls & settings panel */
+    #play-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    #settings-panel {
+      display: none;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 20px;
+      background-color: rgba(30, 30, 60, 0.8);
+      border: 1px solid #4d4dff;
+      border-radius: 15px;
+      backdrop-filter: blur(5px);
+    }
+    
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+    
+    .slider-control {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 45%;
+    }
+    
+    .slider-label {
+      margin-bottom: 8px;
+      color: #ffffff;
+      font-size: 14px;
+    }
+    
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      background: linear-gradient(90deg, #4d4dff, #00ccff);
+      border-radius: 10px;
+      outline: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+    
+    #score {
+      font-size: 28px;
+      color: #ffffff;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    }
+    
+    /* Game stage styles */
+    #game-stage {
+      position: relative;
+      width: 360px;
+      height: 480px;
+      background-color: rgba(30, 30, 60, 0.5);
+      border: 2px solid #4d4dff;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 30px;
+      box-shadow: 0 0 30px rgba(0, 204, 255, 0.3);
+    }
+    
+    .lane {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 120px;
+      border-right: 1px dashed rgba(255,255,255,0.2);
+    }
+    
+    .lane:last-child {
+      border-right: none;
+    }
+    
+    .target-zone {
+      position: absolute;
+      bottom: 60px;
+      height: 40px;
+      width: 100%;
+      background-color: rgba(77, 77, 255, 0.2);
+      border-top: 2px solid #00ccff;
+      border-bottom: 2px solid #00ccff;
+      z-index: 1;
+    }
+    
+    .lane-key {
+      position: absolute;
+      bottom: 10px;
+      width: 80px;
+      height: 40px;
+      background: linear-gradient(90deg, #4d4dff, #00ccff);
+      border-radius: 20px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 2;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    
+    .note {
+      position: absolute;
+      width: 80px;
+      height: 30px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      z-index: 3;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    
+    .note-circle {
+      background: linear-gradient(90deg, #ff00ff, #ff6600);
+    }
+    
+    .note-star {
+      background: linear-gradient(90deg, #ffff00, #ffcc00);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+    
+    .note-square {
+      background: linear-gradient(90deg, #00ccff, #0066ff);
+    }
+    
+    .hit-effect {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+      z-index: 5;
+      transform: scale(0);
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    
+    .combo-display {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-size: 36px;
+      color: white;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(255,255,255,0.7);
+    }
+    
+    .feedback {
+      position: absolute;
+      font-size: 32px;
+      font-weight: bold;
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      transition: transform 0.5s, opacity 0.5s;
+      text-shadow: 0 0 10px currentColor;
+    }
+    
+    .feedback.perfect {
+      color: #ffff00;
+    }
+    
+    .feedback.good {
+      color: #00ff99;
+    }
+    
+    .feedback.ok {
+      color: #00ccff;
+    }
+    
+    .feedback.miss {
+      color: #ff3300;
+    }
+    
+    .feedback.hidden {
+      transform: translateY(-50px) scale(1.5);
+      opacity: 0;
+    }
+    
+    /* Difficulty select */
+    #difficulty-select {
+      display: flex;
+      margin-bottom: 20px;
+      background-color: rgba(30, 30, 60, 0.5);
+      border-radius: 25px;
+      padding: 5px;
+    }
+    
+    .difficulty-btn {
+      padding: 8px 20px;
+      margin: 0 5px;
+      background: transparent;
+      border: none;
+      color: white;
+      transition: all 0.3s;
+      border-radius: 20px;
+    }
+    
+    .difficulty-btn.active {
+      background: linear-gradient(90deg, #4d4dff, #00ccff);
+      color: white;
+      box-shadow: 0 4px 10px rgba(0, 204, 255, 0.3);
+    }
+    
+    /* Visualization & instructions */
+    #visualization {
+      width: 300px;
+      height: 60px;
+      background-color: rgba(30, 30, 60, 0.5);
+      margin-top: 20px;
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    #threshold-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background-color: #00ccff;
+      z-index: 1;
+    }
+    
+    #energy-bar {
+      position: absolute;
+      bottom: 0;
+      width: 20px;
+      background: linear-gradient(0deg, #4d4dff, #00ccff);
+      transition: height 0.1s;
+    }
+    
+    #status, #instructions, #debug-info, #debug-toggle {
+      margin-top: 15px;
+      color: white;
+    }
+    
+    #debug-info {
+      font-size: 12px;
+      display: none;
+      background-color: rgba(30, 30, 60, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    #debug-toggle {
+      font-size: 14px;
+      cursor: pointer;
+      color: #00ccff;
+      text-decoration: underline;
+    }
+    
+    /* Results screen */
+    #results-screen {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(26, 26, 46, 0.95);
+      z-index: 10;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(5px);
+    }
+    
+    .results-content {
+      background: linear-gradient(135deg, rgba(30, 30, 60, 0.9), rgba(22, 33, 62, 0.9));
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(0, 204, 255, 0.3);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      border: 1px solid #4d4dff;
+    }
+    
+    .result-stat {
+      margin: 15px 0;
+      font-size: 20px;
+      color: white;
+    }
+    
+    .grade {
+      font-size: 72px;
+      font-weight: bold;
+      margin: 20px 0;
+      text-shadow: 0 0 20px currentColor;
+    }
+    
+    .grade-S {
+      color: #ffff00;
+    }
+    
+    .grade-A {
+      color: #00ff99;
+    }
+    
+    .grade-B {
+      color: #00ccff;
+    }
+    
+    .grade-C {
+      color: #ff9900;
+    }
+    
+    .grade-D {
+      color: #ff3300;
+    }
+    
+    /* Disco lights effect */
+    .disco-light {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -2;
+      opacity: 0.1;
+      background: radial-gradient(circle at 20% 30%, rgba(255,0,255,0.5), transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(0,255,255,0.5), transparent 50%),
+                  radial-gradient(circle at 30% 70%, rgba(255,255,0,0.5), transparent 50%);
+      animation: discoLights 10s infinite alternate;
+    }
+    
+    @keyframes discoLights {
+      0% { opacity: 0.1; filter: hue-rotate(0deg); }
+      100% { opacity: 0.2; filter: hue-rotate(360deg); }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      #game-stage {
+        width: 300px;
+        height: 400px;
+      }
+      
+      .lane {
+        width: 100px;
+      }
+      
+      .note {
+        width: 70px;
+      }
+      
+      .lane-key {
+        width: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Disco elements -->
+  <div class="disco-ball"></div>
+  <div class="disco-light"></div>
+  
+  <!-- Home Page -->
+  <div id="home-page">
+    <h1>🕺 Disco Beat Revolution 💃</h1>
+    <p>Select a song to play:</p>
+    <select id="song-select">
+      <optgroup label="Cute & Slow (70-85 BPM)">
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3">Smooth Jazz</option>
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3">Cool Jazz</option>
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3">Jazz Lounge</option>
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3">Classical Adagio</option>
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3">Piano Sonata</option>
+        <option value="https://assets.mixkit.co/music/preview/mixkit-cute-love-song-1120.mp3">Cute Love Song</option>
+      </optgroup>
+      
+      <optgroup label="Medium Tempo (85-100 BPM)">
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">SoundHelix Rock 1</option>
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">SoundHelix Rock 2</option>
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">SoundHelix Rock 3</option>
+        <option value="https://assets.mixkit.co/music/preview/mixkit-game-show-suspense-waiting-668.mp3">Game Show Suspense</option>
+      </optgroup>
+      
+      <optgroup label="Upbeat (100-120 BPM)">
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3">Chill Electronica</option>
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3">Ambient Beats</option>
+        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3">Downtempo Groove</option>
+        <option value="https://assets.mixkit.co/music/preview/mixkit-happy-pop-1160.mp3">Happy Pop</option>
+      </optgroup>
+    </select>
+    
+    <div id="difficulty-select">
+      <button class="difficulty-btn active" data-difficulty="easy">Easy</button>
+      <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+      <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+    </div>
+    
+    <button id="start-game">Start Game</button>
+    
+    <div id="instructions">
+      <p>Press the keys when notes reach the target zone!</p>
+      <p>Left Lane: A or ←<br>
+         Middle Lane: S or ↓<br>
+         Right Lane: D or →</p>
+    </div>
+  </div>
+
+  <!-- Game Page -->
+  <div id="game-page">
+    <!-- Hamburger Menu -->
+    <div id="menu">
+      ☰
+      <div id="menu-content">
+        <div class="menu-item" id="menu-restart">Restart</div>
+        <div class="menu-item" id="menu-home">Home</div>
+        <div class="menu-item" id="menu-settings">Settings</div>
+      </div>
+    </div>
+    
+    <h1>🕺 Disco Beat Revolution 💃</h1>
+    <div id="score">Score: <span id="score-value">0</span></div>
+    
+    <!-- Play Controls -->
+    <div id="play-controls">
+      <div class="button-group">
+        <button id="play">Play</button>
+        <button id="pause">Pause</button>
+      </div>
+    </div>
+    
+    <!-- Settings Panel -->
+    <div id="settings-panel">
+      <div class="control-row">
+        <div class="slider-control">
+          <div class="slider-label">Note Speed: <span id="speed-value">5</span></div>
+          <input type="range" id="speed" min="1" max="10" value="5">
+        </div>
+        <div class="slider-control">
+          <div class="slider-label">Sensitivity: <span id="sensitivity-value">5</span></div>
+          <input type="range" id="sensitivity" min="1" max="10" value="5">
+        </div>
+      </div>
+      <div class="control-row">
+        <div class="slider-control">
+          <div class="slider-label">Min Interval: <span id="interval-value">300</span>ms</div>
+          <input type="range" id="interval" min="50" max="1000" step="10" value="300">
+        </div>
+        <div class="slider-control">
+          <div class="slider-label">Bass Cutoff: <span id="cutoff-value">150</span>Hz</div>
+          <input type="range" id="cutoff" min="50" max="500" step="10" value="150">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Game Stage -->
+    <div id="game-stage">
+      <div class="lane" style="left: 0px;">
+        <div class="lane-key">A</div>
+      </div>
+      <div class="lane" style="left: 120px;">
+        <div class="lane-key">S</div>
+      </div>
+      <div class="lane" style="left: 240px;">
+        <div class="lane-key">D</div>
+      </div>
+      <div class="target-zone"></div>
+      <div class="combo-display">Combo: <span id="combo-counter">0</span></div>
+    </div>
+    
+    <div id="status">Press Play to start!</div>
+    
+    <div id="visualization">
+      <div id="threshold-line"></div>
+      <div id="energy-bar"></div>
+    </div>
+    
+    <div id="debug-toggle">Show Debug Info</div>
+    <div id="debug-info">
+      Current Energy: <span id="current-energy">0</span><br>
+      Threshold: <span id="current-threshold">0</span><br>
+      Beats Detected: <span id="beats-detected">0</span>
+    </div>
+    
+    <!-- Results Screen -->
+    <div id="results-screen">
+      <div class="results-content">
+        <h2>Game Results</h2>
+        <div class="grade">A</div>
+        <div class="result-stat">Score: <span id="final-score">0</span></div>
+        <div class="result-stat">Perfect: <span id="perfect-count">0</span></div>
+        <div class="result-stat">Good: <span id="good-count">0</span></div>
+        <div class="result-stat">OK: <span id="ok-count">0</span></div>
+        <div class="result-stat">Miss: <span id="miss-count">0</span></div>
+        <div class="result-stat">Max Combo: <span id="max-combo">0</span></div>
+        <button id="retry-button">Play Again</button>
+        <button id="home-button">Back to Home</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variable for selected song and difficulty
+    let selectedSong = "";
+    let selectedDifficulty = "easy";
+    
+    // Difficulty buttons event listeners
+    const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+    difficultyButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        difficultyButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        selectedDifficulty = this.dataset.difficulty;
+      });
+    });
+    
+    // When "Start Game" is clicked on the home page, hide home page and show game page.
+    document.getElementById("start-game").addEventListener("click", function(){
+      selectedSong = document.getElementById("song-select").value;
+      document.getElementById("home-page").style.display = "none";
+      document.getElementById("game-page").style.display = "flex";
+      // After switching pages, the audio will be set up when Play is clicked.
+    });
+
+    // -------------------- Game Code Below --------------------
+    const gameStage = document.getElementById('game-stage');
+    const scoreSpan = document.getElementById('score-value');
+    const comboCounter = document.getElementById('combo-counter');
+    const playBtn = document.getElementById('play');
+    const pauseBtn = document.getElementById('pause');
+    const statusEl = document.getElementById('status');
+    const energyBar = document.getElementById('energy-bar');
+    const thresholdLine = document.getElementById('threshold-line');
+    const debugInfo = document.getElementById('debug-info');
+    const debugToggle = document.getElementById('debug-toggle');
+    const resultsScreen = document.getElementById('results-screen');
+    
+    // Results elements
+    const finalScoreEl = document.getElementById('final-score');
+    const perfectCountEl = document.getElementById('perfect-count');
+    const goodCountEl = document.getElementById('good-count');
+    const okCountEl = document.getElementById('ok-count');
+    const missCountEl = document.getElementById('miss-count');
+    const maxComboEl = document.getElementById('max-combo');
+    const gradeEl = document.querySelector('.grade');
+    const retryButton = document.getElementById('retry-button');
+    const homeButton = document.getElementById('home-button');
+    
+    // Menu elements
+    const menu = document.getElementById('menu');
+    const menuContent = document.getElementById('menu-content');
+    const menuRestart = document.getElementById('menu-restart');
+    const menuHome = document.getElementById('menu-home');
+    const menuSettings = document.getElementById('menu-settings');
+    
+    // Settings panel container
+    const settingsPanel = document.getElementById('settings-panel');
+    
+    // Controllers for slider values
+    const speedSlider = document.getElementById('speed');
+    const speedValue = document.getElementById('speed-value');
+    const sensitivitySlider = document.getElementById('sensitivity');
+    const sensitivityValue = document.getElementById('sensitivity-value');
+    const intervalSlider = document.getElementById('interval');
+    const intervalValue = document.getElementById('interval-value');
+    const cutoffSlider = document.getElementById('cutoff');
+    const cutoffValue = document.getElementById('cutoff-value');
+    
+    // Debug display elements
+    const currentEnergyEl = document.getElementById('current-energy');
+    const currentThresholdEl = document.getElementById('current-threshold');
+    const beatsDetectedEl = document.getElementById('beats-detected');
+
+    // Game variables
+    let score = 0;
+    let combo = 0;
+    let maxCombo = 0;
+    let perfectCount = 0;
+    let goodCount = 0;
+    let okCount = 0;
+    let missCount = 0;
+    let activeNotes = [];
+    let context, audio, source, analyser, lowPassFilter, dataArray;
+    let animationId;
+    let gameUpdateId;
+    let lastBeatTime = 0;
+    let energyHistory = [];
+    let beatsDetected = 0;
+    let isPlaying = false;
+    let noteSpeed = 5;
+    let noteTypes = ['circle', 'star', 'square'];
+    let noteLanes = [0, 1, 2];
+    let songDuration = 0;
+    let songEndTimer;
+    
+    // Key mappings for the lanes
+    const keyMap = {
+      'a': 0, 'arrowleft': 0,
+      's': 1, 'arrowdown': 1,
+      'd': 2, 'arrowright': 2
+    };
+    
+    // Initialize game
+    function initGame() {
+      // Clear stage of existing notes
+      const existingNotes = document.querySelectorAll('.note');
+      existingNotes.forEach(note => note.remove());
+      
+      // Reset game stats
+      score = 0;
+      combo = 0;
+      maxCombo = 0;
+      perfectCount = 0;
+      goodCount = 0;
+      okCount = 0;
+      missCount = 0;
+      activeNotes = [];
+      
+      // Update display
+      scoreSpan.textContent = score;
+      comboCounter.textContent = combo;
+      
+      // Set note speed based on difficulty and slider
+      noteSpeed = parseInt(speedSlider.value);
+      // Adjust for selected difficulty
+      if (selectedDifficulty === "medium") {
+        noteSpeed *= 1.3;
+      } else if (selectedDifficulty === "hard") {
+        noteSpeed *= 1.6;
+      }
+    }
+    
+    // Create a new note to fall down a lane
+    function createNote(laneIndex) {
+      const noteType = noteTypes[Math.floor(Math.random() * noteTypes.length)];
+      const lane = document.querySelectorAll('.lane')[laneIndex];
+      const note = document.createElement('div');
+      note.classList.add('note', 'note-' + noteType);
+      note.dataset.lane = laneIndex;
+      note.dataset.top = "-30"; // Starting position above the screen
+      note.style.top = "-30px";
+      note.style.left = "50%";
+      
+      // Add number/shape inside the note
+      note.textContent = Math.floor(Math.random() * 9) + 1;
+      
+      lane.appendChild(note);
+      
+      // Add to active notes
+      activeNotes.push({
+        element: note,
+        lane: laneIndex,
+        type: noteType,
+        position: -30,
+        hit: false,
+        missed: false
+      });
+    }
+    
+    // Update note positions
+    function updateNotes() {
+      if (!isPlaying) return;
+      
+      // Move notes down
+      for (let i = activeNotes.length - 1; i >= 0; i--) {
+        const note = activeNotes[i];
+        if (note.hit || note.missed) continue;
+        
+        note.position += noteSpeed;
+        note.element.style.top = note.position + "px";
+        
+        // Check if note should be removed (passed bottom of screen)
+        if (note.position > 480) {
+          // Mark as missed if not yet hit
+          if (!note.hit) {
+            note.missed = true;
+            missCount++;
+            combo = 0;
+            comboCounter.textContent = combo;
+            showFeedback(note.lane, "miss");
+          }
+          
+          // Remove from DOM
+          note.element.remove();
+          // Remove from active notes array
+          activeNotes.splice(i, 1);
+        }
+      }
+      
+      gameUpdateId = requestAnimationFrame(updateNotes);
+    }
+    
+    // Handle key presses
+    document.addEventListener('keydown', (e) => {
+      if (!isPlaying) return;
+      
+      const key = e.key.toLowerCase();
+      const laneIndex = keyMap[key];
+      
+      if (laneIndex !== undefined) {
+        checkHit(laneIndex);
+      }
+    });
+    
+    // Handle lane clicks (mobile support)
+    document.querySelectorAll('.lane').forEach((lane, index) => {
+      lane.addEventListener('click', () => {
+        if (!isPlaying) return;
+        checkHit(index);
+      });
+    });
+    
+    // Check if a hit was successful
+    function checkHit(laneIndex) {
+      const targetZoneTop = 380; // Target zone top position
+      const targetZoneBottom = 420; // Target zone bottom position
+      let closestNote = null;
+      let closestDistance = Infinity;
+      
+      // Find closest note in the correct lane
+      for (const note of activeNotes) {
+        if (note.lane === laneIndex && !note.hit && !note.missed) {
+          const noteCenter = note.position + 15; // Center of the note
+          const distance = Math.abs(noteCenter - 400); // Distance to target center
+          
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestNote = note;
+          }
+        }
+      }
+      
+      if (closestNote) {
+        const noteCenter = closestNote.position + 15;
+        
+        // Check if within target zone
+        if (noteCenter >= targetZoneTop && noteCenter <= targetZoneBottom) {
+          closestNote.hit = true;
+          
+          // Calculate accuracy
+          const targetCenter = (targetZoneTop + targetZoneBottom) / 2;
+          const accuracy = Math.abs(noteCenter - targetCenter);
+          
+          let points = 0;
+          let feedback = "";
+          
+          // Score based on accuracy
+          if (accuracy < 5) {
+            // Perfect hit
+            points = 300;
+            feedback = "perfect";
+            perfectCount++;
+          } else if (accuracy < 15) {
+            // Good hit
+            points = 200;
+            feedback = "good";
+            goodCount++;
+          } else {
+            // OK hit
+            points = 100;
+            feedback = "ok";
+            okCount++;
+          }
+          
+          // Apply combo multiplier
+          combo++;
+          if (combo > maxCombo) {
+            maxCombo = combo;
+          }
+          
+          // Apply combo bonus
+          if (combo > 10) {
+            points = Math.floor(points * 1.5);
+          } else if (combo > 5) {
+            points = Math.floor(points * 1.2);
+          }
+          
+          // Special bonus for star notes
+          if (closestNote.type === 'star') {
+            points *= 2;
+          }
+          
+          // Update score
+          score += points;
+          scoreSpan.textContent = score;
+          comboCounter.textContent = combo;
+          
+          // Show hit effect and feedback
+          showHitEffect(laneIndex);
+          showFeedback(laneIndex, feedback);
+          
+          // Remove note element
+          closestNote.element.remove();
+          // Remove from active notes array
+          const index = activeNotes.indexOf(closestNote);
+          if (index > -1) {
+            activeNotes.splice(index, 1);
+          }
+        } else if (noteCenter < targetZoneTop && noteCenter > targetZoneTop - 100) {
+          // Too early - small penalty
+          showFeedback(laneIndex, "miss");
+          combo = 0;
+          comboCounter.textContent = combo;
+        }
+      }
+    }
+    
+    // Show hit effect animation
+    function showHitEffect(laneIndex) {
+      const lane = document.querySelectorAll('.lane')[laneIndex];
+      const effect = document.createElement('div');
+      effect.classList.add('hit-effect');
+      effect.style.left = "50%";
+      effect.style.bottom = "60px";
+      effect.style.transform = "translate(-50%, 0) scale(0)";
+      
+      lane.appendChild(effect);
+      
+      // Trigger animation
+      setTimeout(() => {
+        effect.style.transform = "translate(-50%, 0) scale(1)";
+        effect.style.opacity = "1";
+      }, 10);
+      
+      // Remove after animation
+      setTimeout(() => {
+        effect.style.transform = "translate(-50%, 0) scale(1.5)";
+        effect.style.opacity = "0";
+        setTimeout(() => effect.remove(), 300);
+      }, 300);
+    }
+    
+    // Show feedback text (Perfect, Good, etc.)
+    function showFeedback(laneIndex, type) {
+      const lane = document.querySelectorAll('.lane')[laneIndex];
+      const feedback = document.createElement('div');
+      feedback.classList.add('feedback', type);
+      feedback.textContent = type.toUpperCase();
+      feedback.style.left = "50%";
+      feedback.style.bottom = "100px";
+      feedback.style.transform = "translateX(-50%)";
+      
+      lane.appendChild(feedback);
+      
+      // Hide after a short delay
+      setTimeout(() => {
+        feedback.classList.add('hidden');
+        setTimeout(() => feedback.remove(), 500);
+      }, 500);
+    }
+    
+    // Audio beat detection
+    function detectBeat() {
+      if (!isPlaying) return;
+      analyser.getByteFrequencyData(dataArray);
+      const cutoffFreq = parseInt(cutoffSlider.value);
+      const bassBins = Math.floor(cutoffFreq * analyser.frequencyBinCount / (context.sampleRate / 2));
+      let bassEnergy = 0;
+      for (let i = 0; i < bassBins; i++) {
+        const weight = 1 - (i / bassBins);
+        bassEnergy += dataArray[i] * weight;
+      }
+      bassEnergy = bassEnergy / bassBins * 2;
+      energyBar.style.height = Math.min(100, bassEnergy / 2.55) + '%';
+      energyHistory.push(bassEnergy);
+      if (energyHistory.length > 50) energyHistory.shift();
+      const avgEnergy = energyHistory.reduce((a, b) => a + b, 0) / energyHistory.length;
+      const varianceEnergy = energyHistory.reduce((a, b) => a + Math.pow(b - avgEnergy, 2), 0) / energyHistory.length;
+      const standardDeviation = Math.sqrt(varianceEnergy);
+      const sensitivity = parseInt(sensitivitySlider.value);
+      const sensitivityFactor = (11 - sensitivity) * 0.2;
+      const threshold = avgEnergy + (standardDeviation * sensitivityFactor);
+      thresholdLine.style.bottom = Math.min(100, threshold / 2.55) + '%';
+      if (debugInfo.style.display === 'block') {
+        currentEnergyEl.textContent = Math.round(bassEnergy);
+        currentThresholdEl.textContent = Math.round(threshold);
+        beatsDetectedEl.textContent = beatsDetected;
+      }
+      const now = context.currentTime;
+      const minTimeBetweenBeats = parseInt(intervalSlider.value) / 1000;
+      if (bassEnergy > threshold && now - lastBeatTime > minTimeBetweenBeats) {
+        lastBeatTime = now;
+        beatsDetected++;
+        // Create a new note on a random lane
+        createNote(Math.floor(Math.random() * 3));
+      }
+      animationId = requestAnimationFrame(detectBeat);
+    }
+    
+    // Set up audio context
+    function setupAudio() {
+      try {
+        // Create audio context if it doesn't exist
+        if (!context) {
+          context = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = context.createAnalyser();
+          analyser.fftSize = 256;
+          lowPassFilter = context.createBiquadFilter();
+          lowPassFilter.type = "lowpass";
+          lowPassFilter.frequency.value = parseInt(cutoffSlider.value);
+          dataArray = new Uint8Array(analyser.frequencyBinCount);
+        }
+        
+        // If audio is already set up, just resume context
+        if (context.state === 'suspended') {
+          context.resume();
+        }
+        
+        return true;
+      } catch (e) {
+        console.error("Audio setup failed:", e);
+        statusEl.textContent = "Audio setup failed. Please try again.";
+        return false;
+      }
+    }
+    
+    // Load and play selected song
+    function playSong() {
+      // First resume the audio context if suspended
+      if (context && context.state === 'suspended') {
+        context.resume().then(() => {
+          setupAndPlay();
+        });
+      } else {
+        setupAndPlay();
+      }
+    }
+
+    function setupAndPlay() {
+      if (!setupAudio()) return;
+      
+      // Stop any existing audio
+      if (source) {
+        source.stop();
+        cancelAnimationFrame(animationId);
+        cancelAnimationFrame(gameUpdateId);
+      }
+      
+      initGame();
+            
+      // Create new audio source based on selection
+      if (selectedSong.startsWith("http")) {
+        // Handle external URLs
+        fetch(selectedSong)
+          .then(response => response.arrayBuffer())
+          .then(arrayBuffer => context.decodeAudioData(arrayBuffer))
+          .then(audioBuffer => {
+            source = context.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(lowPassFilter);
+            lowPassFilter.connect(analyser);
+            analyser.connect(context.destination);
+            
+            // Start audio
+            source.start(0);
+            isPlaying = true;
+            statusEl.textContent = "Playing: " + selectedSong.split('/').pop();
+            
+            // Set up beat detection
+            detectBeat();
+            updateNotes();
+            
+            // Set timer for song end
+            songDuration = audioBuffer.duration;
+            clearTimeout(songEndTimer);
+            songEndTimer = setTimeout(endGame, songDuration * 1000);
+          })
+          .catch(e => {
+            console.error("Audio loading failed:", e);
+            statusEl.textContent = "Failed to load audio. Please try another song.";
+            // Fall back to simulation if loading fails
+            simulateExternalAudio();
+          });
+      }
+    }
+    
+    // Simulate audio for external URLs (like YouTube)
+    function simulateExternalAudio() {
+      isPlaying = true;
+      statusEl.textContent = "Simulating beats for selected song";
+      
+      // Start beat simulation
+      detectBeat();
+      updateNotes();
+      
+      // Simulate random beat generation
+      const beatInterval = setInterval(() => {
+        if (!isPlaying) {
+          clearInterval(beatInterval);
+          return;
+        }
+        createNote(Math.floor(Math.random() * 3));
+      }, 600 - (selectedDifficulty === 'easy' ? 200 : selectedDifficulty === 'medium' ? 100 : 0));
+      
+      // Set song duration (3 minutes for simulation)
+      clearTimeout(songEndTimer);
+      songEndTimer = setTimeout(endGame, 180000);
+    }
+    
+    // End game and show results
+    function endGame() {
+      isPlaying = false;
+      cancelAnimationFrame(animationId);
+      cancelAnimationFrame(gameUpdateId);
+      
+      // Stop audio if playing
+      if (source) {
+        source.stop();
+      }
+      
+      // Calculate grade
+      let grade = 'D';
+      const totalHits = perfectCount + goodCount + okCount;
+      const accuracy = totalHits > 0 ? (perfectCount * 1 + goodCount * 0.7 + okCount * 0.3) / totalHits : 0;
+      
+      if (accuracy > 0.9) {
+        grade = 'S';
+      } else if (accuracy > 0.8) {
+        grade = 'A';
+      } else if (accuracy > 0.6) {
+        grade = 'B';
+      } else if (accuracy > 0.4) {
+        grade = 'C';
+      }
+      
+      // Update results screen
+      finalScoreEl.textContent = score;
+      perfectCountEl.textContent = perfectCount;
+      goodCountEl.textContent = goodCount;
+      okCountEl.textContent = okCount;
+      missCountEl.textContent = missCount;
+      maxComboEl.textContent = maxCombo;
+      gradeEl.textContent = grade;
+      gradeEl.className = 'grade grade-' + grade;
+      
+      // Show results screen
+      resultsScreen.style.display = 'flex';
+    }
+    
+    // Event listeners for play/pause buttons
+    playBtn.addEventListener('click', () => {
+      if (!isPlaying) {
+        playSong();
+      }
+    });
+    
+    pauseBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        isPlaying = false;
+        if (source) {
+          source.stop();
+        }
+        cancelAnimationFrame(animationId);
+        cancelAnimationFrame(gameUpdateId);
+        statusEl.textContent = "Paused";
+      }
+    });
+    
+    // Menu event listeners
+    menu.addEventListener('click', () => {
+      menuContent.style.display = menuContent.style.display === 'block' ? 'none' : 'block';
+    });
+    
+    menuRestart.addEventListener('click', () => {
+      menuContent.style.display = 'none';
+      playSong();
+    });
+    
+    menuHome.addEventListener('click', () => {
+      menuContent.style.display = 'none';
+      document.getElementById('game-page').style.display = 'none';
+      document.getElementById('home-page').style.display = 'flex';
+      if (source) {
+        source.stop();
+      }
+      isPlaying = false;
+      resultsScreen.style.display = 'none';
+    });
+    
+    menuSettings.addEventListener('click', () => {
+      menuContent.style.display = 'none';
+      settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
+    });
+    
+    // Results screen buttons
+    retryButton.addEventListener('click', () => {
+      resultsScreen.style.display = 'none';
+      playSong();
+    });
+    
+    homeButton.addEventListener('click', () => {
+      resultsScreen.style.display = 'none';
+      document.getElementById('game-page').style.display = 'none';
+      document.getElementById('home-page').style.display = 'flex';
+    });
+    
+    // Slider event listeners
+    speedSlider.addEventListener('input', () => {
+      speedValue.textContent = speedSlider.value;
+      noteSpeed = parseInt(speedSlider.value);
+      // Adjust for selected difficulty
+      if (selectedDifficulty === "medium") {
+        noteSpeed *= 1.3;
+      } else if (selectedDifficulty === "hard") {
+        noteSpeed *= 1.6;
+      }
+    });
+    
+    sensitivitySlider.addEventListener('input', () => {
+      sensitivityValue.textContent = sensitivitySlider.value;
+    });
+    
+    intervalSlider.addEventListener('input', () => {
+      intervalValue.textContent = intervalSlider.value;
+    });
+    
+    cutoffSlider.addEventListener('input', () => {
+      cutoffValue.textContent = cutoffSlider.value;
+      if (lowPassFilter) {
+        lowPassFilter.frequency.value = parseInt(cutoffSlider.value);
+      }
+    });
+    
+    // Debug toggle
+    debugToggle.addEventListener('click', () => {
+      debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+    });
+    
+    // Initialize settings panel values
+    speedValue.textContent = speedSlider.value;
+    sensitivityValue.textContent = sensitivitySlider.value;
+    intervalValue.textContent = intervalSlider.value;
+    cutoffValue.textContent = cutoffSlider.value;
+    
+    // Touch support for mobile devices
+    document.addEventListener('touchstart', function(e) {
+      if (!isPlaying) return;
+      
+      // Get touch position
+      const touchX = e.touches[0].clientX;
+      const stageRect = gameStage.getBoundingClientRect();
+      
+      // Determine which lane was touched
+      if (touchX >= stageRect.left && touchX <= stageRect.right) {
+        const laneWidth = stageRect.width / 3;
+        const laneIndex = Math.floor((touchX - stageRect.left) / laneWidth);
+        checkHit(laneIndex);
+      }
+    }, false);
+    
+    // Prevent scrolling on touch
+    document.addEventListener('touchmove', function(e) {
+      if (isPlaying) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  </script>
+</body>
+</html>
